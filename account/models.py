@@ -7,8 +7,9 @@ import settings
 class User(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, default=None)
     display_name: str
-    email: str = Field(sa_column=Column('email', String(320), unique=True, nullable=False))
+    email: str = Field(sa_column=Column('email', String(320), unique=True, nullable=False, index=True))
     password: str
+    is_active: bool = True
 
     def set_password(self, password: str):
         self.password = bcrypt.hashpw(
