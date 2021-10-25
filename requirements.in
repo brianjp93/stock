@@ -1,0 +1,9 @@
+aiohttp
+alembic
+bcrypt
+beautifulsoup4
+fastapi
+psycopg2-binary
+python-dotenv
+sqlmodel
+uvicorn[standard]
