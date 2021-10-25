@@ -20,13 +20,23 @@ bcrypt==3.2.0
     # via -r requirements.in
 beautifulsoup4==4.10.0
     # via -r requirements.in
+certifi==2021.10.8
+    # via requests
 cffi==1.15.0
     # via bcrypt
 chardet==4.0.0
     # via aiohttp
+charset-normalizer==2.0.7
+    # via requests
 click==8.0.3
     # via uvicorn
 fastapi==0.70.0
+    # via
+    #   -r requirements.in
+    #   fastapi-jwt-auth
+fastapi-jwt-auth==0.5.0
+    # via -r requirements.in
+finnhub-python==2.4.5
     # via -r requirements.in
 greenlet==1.1.2
     # via sqlalchemy
@@ -37,6 +47,7 @@ httptools==0.2.0
 idna==3.3
     # via
     #   anyio
+    #   requests
     #   yarl
 mako==1.1.5
     # via alembic
@@ -54,12 +65,16 @@ pydantic==1.8.2
     # via
     #   fastapi
     #   sqlmodel
+pyjwt==1.7.1
+    # via fastapi-jwt-auth
 python-dotenv==0.19.1
     # via
     #   -r requirements.in
     #   uvicorn
 pyyaml==6.0
     # via uvicorn
+requests==2.26.0
+    # via finnhub-python
 six==1.16.0
     # via bcrypt
 sniffio==1.2.0
@@ -81,6 +96,8 @@ typing-extensions==3.10.0.2
     #   aiohttp
     #   pydantic
     #   sqlalchemy2-stubs
+urllib3==1.26.7
+    # via requests
 uvicorn[standard]==0.15.0
     # via -r requirements.in
 uvloop==0.16.0
