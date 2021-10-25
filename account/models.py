@@ -1,7 +1,6 @@
 from typing import Optional
 from sqlmodel import SQLModel, Field, Column, String
 import bcrypt
-import settings
 
 
 class User(SQLModel, table=True):
@@ -14,7 +13,7 @@ class User(SQLModel, table=True):
     def set_password(self, password: str):
         self.password = bcrypt.hashpw(
             password.encode(),
-            settings.SECRET.encode(),
+            bcrypt.gensalt(),
         ).decode()
 
     def check_password(self, password: str):
