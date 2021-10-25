@@ -1,4 +1,4 @@
 .env
 __pycache__
-db.sqlite
+sqlite.db
 **/node_modules/

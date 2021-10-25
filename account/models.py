@@ -1,20 +1,32 @@
-from sqlmodel import SQLModel, Field, Column
+from typing import Optional
+from sqlmodel import SQLModel, Field, Column, String
 import bcrypt
 import settings
-from db import session
+
 
 class User(SQLModel, table=True):
-    id: int | None = Field(primary_key=True, default=None)
+    id: Optional[int] = Field(primary_key=True, default=None)
     display_name: str
-    email: str = Field(sa_column=Column(unique=True))
+    email: str = Field(sa_column=Column('email', String(320), unique=True, nullable=False))
     password: str
 
     def set_password(self, password: str):
-        self.password = str(bcrypt.hashpw(
+        self.password = bcrypt.hashpw(
             password.encode(),
             settings.SECRET.encode(),
-        ))
-        session.add(self)
+        ).decode()
 
     def check_password(self, password: str):
         return bcrypt.checkpw(password.encode(), self.password.encode())
+
+
+class UserCreate(SQLModel):
+    display_name: str
+    email: str
+    password: str
+
+
+class UserRead(SQLModel):
+    id: int
+    email: str
+    display_name: str

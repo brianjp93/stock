@@ -21,8 +21,8 @@ def convert_sources(content: str):
 
 @app.get('/{full_path:path}')
 async def root(request: Request, full_path: str):
-    async with aiohttp.ClientSession() as session:
-        async with session.get('http://localhost:3000') as response:
+    async with aiohttp.ClientSession() as sesh:
+        async with sesh.get('http://localhost:3000') as response:
             content = await response.text()
             content = convert_sources(content)
             return HTMLResponse(content)
