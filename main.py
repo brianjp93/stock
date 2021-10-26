@@ -16,6 +16,11 @@ def convert_sources(content: str):
     for script in soup.findAll('script'):
         if script.get('src', '').startswith('/'):
             script['src'] = frontend_host + script['src']
+    for link in soup.findAll('link'):
+        if link.get('href', '').startswith('/'):
+            link['href'] = frontend_host + link['href']
+    for rel in soup.findAll('link', {'rel': 'manifest'}):
+        rel.decompose()
     return str(soup)
 
 

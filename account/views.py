@@ -53,7 +53,7 @@ async def login(
         )
     access_token = access_token = Authorize.create_access_token(
         subject=db_user.email,
-        expires_time=timedelta(seconds=10),
+        expires_time=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     refresh_token = Authorize.create_refresh_token(subject=db_user.email)
 

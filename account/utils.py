@@ -20,7 +20,7 @@ def authenticate_user(email: str, password: str) -> User | None:
 
 
 def refresh_token(Authorize: AuthJWT):
-    Authorize.jwt_required()
+    Authorize.jwt_refresh_token_required()
     email = Authorize.get_jwt_subject()
     if isinstance(email, str):
         access_token = Authorize.create_access_token(email)
@@ -39,7 +39,6 @@ def get_current_user(Authorize: AuthJWT = Depends()):
             refresh_token(Authorize)
         except MissingTokenError:
             raise credentials_exception
-    Authorize.jwt_required()
     email = Authorize.get_jwt_subject()
     user = None
     if isinstance(email, str):
