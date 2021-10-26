@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 8e9ef30d667a
+Revision ID: 61f0221088e4
 Revises: 
-Create Date: 2021-10-24 18:20:42.093697
+Create Date: 2021-10-26 11:46:20.341271
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision = '8e9ef30d667a'
+revision = '61f0221088e4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,14 +33,17 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=True),
     sa.Column('display_name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('password', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_display_name'), 'user', ['display_name'], unique=False)
+    op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
     op.create_index(op.f('ix_user_id'), 'user', ['id'], unique=False)
+    op.create_index(op.f('ix_user_is_active'), 'user', ['is_active'], unique=False)
     op.create_index(op.f('ix_user_password'), 'user', ['password'], unique=False)
     op.create_table('transaction',
     sa.Column('cost', sa.Float(precision=2, asdecimal=True), nullable=False),
+    sa.Column('created_at', sa.TIMESTAMP(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('count', sa.Float(), nullable=False),
@@ -60,7 +63,9 @@ def downgrade():
     op.drop_index(op.f('ix_transaction_count'), table_name='transaction')
     op.drop_table('transaction')
     op.drop_index(op.f('ix_user_password'), table_name='user')
+    op.drop_index(op.f('ix_user_is_active'), table_name='user')
     op.drop_index(op.f('ix_user_id'), table_name='user')
+    op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_index(op.f('ix_user_display_name'), table_name='user')
     op.drop_table('user')
     op.drop_index(op.f('ix_ticker_name'), table_name='ticker')

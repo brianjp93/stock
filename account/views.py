@@ -21,7 +21,8 @@ router = APIRouter(
 def get_config():
     return [
         ('authjwt_secret_key', settings.SECRET),
-        ('authjwt_token_location', {"cookies"})
+        ('authjwt_token_location', {"cookies"}),
+        ('authjwt_cookie_csrf_protect', False),
     ]
 
 
