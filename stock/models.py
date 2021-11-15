@@ -8,7 +8,7 @@ from typing import Optional
 class Ticker(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True, default=None)
     name: str
-    code: str = Field(sa_column=Column('code', String(10), unique=True))
+    code: str = Field(sa_column=Column('code', String(32), unique=True))
 
 
 class Transaction(SQLModel, table=True):

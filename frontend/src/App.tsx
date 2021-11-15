@@ -1,38 +1,39 @@
-import { useQuery, useMutation } from "react-query";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Skeleton } from "./components/general/skeleton";
-import Button from "react-bootstrap/Button";
+import { useEffect } from "react";
+import { useMutation } from "react-query";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+// import { Skeleton } from "./components/general/skeleton";
 import { Login } from "./components/auth/login";
+import { Home } from './components/home';
+import { useUserQuery } from "./hooks";
 import * as api from "./api/api";
 
 function App() {
-  const userQuery = useQuery("user", api.account.me, {
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function Logout() {
+  const userQuery = useUserQuery();
+  const navigate = useNavigate();
 
   const logoutMut = useMutation(async () => {
     return api.account.logout().then((data) => {
       userQuery.refetch();
+      navigate("/");
       return data;
     });
   });
 
-  return (
-    <div className="App">
-      <h1>Welcome!</h1>
+  useEffect(() => logoutMut.mutate(), [logoutMut]);
 
-      {userQuery.isSuccess && (
-        <>
-          <div>Hello, {userQuery.data.email}</div>
-          <div>
-            <Button onClick={() => logoutMut.mutate()}>Logout</Button>
-          </div>
-        </>
-      )}
-      {userQuery.isError && <Login />}
-    </div>
-  );
+  return <div>Logging out...</div>;
 }
 
 export default App;
