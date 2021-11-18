@@ -40,6 +40,11 @@ export function Search() {
         <Button type='button' onClick={() => setSearch(searchText)}>Search</Button>
       </Form.Group>
     </Form>
+    {searchQuery.isFetching &&
+      <Row>
+        <Col>Loading...</Col>
+      </Row>
+    }
     {searchQuery.isSuccess && searchQuery.data.map(item => {
       return (
         <Row>

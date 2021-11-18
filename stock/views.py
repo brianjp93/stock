@@ -29,11 +29,13 @@ async def basic_financials(symbol: str):
 @router.get("/search/")
 async def search(q: str):
     response = client.symbol_lookup(q)
+    ticker_list = []
     for item in response.get("result", []):
         qs = Ticker.filter(code=item['symbol'])
-        if not (ticker := await qs.first()):
+        if not await qs.first():
             ticker = Ticker(name=item["description"], code=item["symbol"])
-            await ticker.save()
+            ticker_list.append(ticker)
+    await Ticker.bulk_create(ticker_list)
     return response
 
 
