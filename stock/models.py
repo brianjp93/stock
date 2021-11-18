@@ -8,7 +8,7 @@ from datetime import datetime
 
 class Ticker(models.Model):
     id = fields.IntField(pk=True)
-    name = fields.CharField(max_length=64)
+    name = fields.CharField(max_length=256)
     code = fields.CharField(max_length=64, unique=True)
 
 Ticker_Pydantic = pydantic_model_creator(Ticker, name='Ticker')
