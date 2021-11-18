@@ -1,5 +1,5 @@
+aerich
 aiohttp
-alembic
 bcrypt
 beautifulsoup4
 fastapi
@@ -7,5 +7,5 @@ fastapi-jwt-auth
 finnhub-python
 psycopg2-binary
 python-dotenv
-sqlmodel
+tortoise-orm[asyncpg]
 uvicorn[standard]

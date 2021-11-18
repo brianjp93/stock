@@ -1,12 +1,12 @@
 from datetime import timedelta
-import settings
+from config.settings import get_settings
 
 from fastapi import APIRouter, Depends, status, HTTPException
-from sqlmodel import Session
 from fastapi_jwt_auth import AuthJWT
-from db import get_session
 from account.models import UserCreate, UserRead, User, UserLogin
 from account.utils import get_current_active_user, authenticate_user
+
+settings = get_settings()
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -20,7 +20,7 @@ router = APIRouter(
 @AuthJWT.load_config
 def get_config():
     return [
-        ('authjwt_secret_key', settings.SECRET),
+        ('authjwt_secret_key', settings.SECRET_KEY),
         ('authjwt_token_location', {"cookies"}),
         ('authjwt_cookie_csrf_protect', False),
     ]
@@ -32,11 +32,10 @@ async def me(current_user: User = Depends(get_current_active_user)):
 
 
 @router.post("/", response_model=UserRead)
-async def create_user(*, session: Session = Depends(get_session), user: UserCreate):
-    db_user: User = User.from_orm(user)
+async def create_user(*, user: UserCreate):
+    db_user: User = User(**user.dict())
     db_user.set_password(db_user.password)
-    session.add(db_user)
-    session.commit()
+    await db_user.save()
     return db_user
 
 
@@ -45,7 +44,7 @@ async def login(
     user: UserLogin,
     Authorize: AuthJWT = Depends(),
 ):
-    db_user = authenticate_user(user.email, user.password)
+    db_user = await authenticate_user(user.email, user.password)
     if not db_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -1,14 +1,16 @@
 from typing import Optional
-from sqlmodel import SQLModel, Field, Column, String
+from tortoise import models, fields
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
+from pydantic import BaseModel
 import bcrypt
 
 
-class User(SQLModel, table=True):
-    id: Optional[int] = Field(primary_key=True, default=None)
-    display_name: str
-    email: str = Field(sa_column=Column('email', String(320), unique=True, nullable=False, index=True))
-    password: str
-    is_active: bool = True
+class User(models.Model):
+    id = fields.IntField(pk=True)
+    display_name = fields.CharField(max_length=128, null=False)
+    email = fields.CharField(max_length=128, unique=True, null=False)
+    password = fields.CharField(max_length=256, null=True)
+    is_active = fields.BooleanField(default=True, null=False)
 
     def set_password(self, password: str):
         self.password = bcrypt.hashpw(
@@ -20,27 +22,30 @@ class User(SQLModel, table=True):
         return bcrypt.checkpw(password.encode(), self.password.encode())
 
 
-class UserCreate(SQLModel):
+User_Pydantic = pydantic_model_creator(User, name='User')
+
+
+class UserCreate(BaseModel):
     display_name: str
     email: str
     password: str
 
 
-class UserRead(SQLModel):
+class UserRead(BaseModel):
     id: int
     email: str
     display_name: str
 
 
-class UserLogin(SQLModel):
+class UserLogin(BaseModel):
     email: str
     password: str
 
 
-class Token(SQLModel):
+class Token(BaseModel):
     access_token: str
     token_type: str
 
 
-class TokenData(SQLModel):
+class TokenData(BaseModel):
     username: Optional[str] = None

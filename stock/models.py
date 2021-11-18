@@ -1,39 +1,30 @@
-from datetime import datetime
-from sqlmodel import SQLModel, Field, Column, String, Relationship, Float, TIMESTAMP
-from account.models import User
-from decimal import Decimal
 from typing import Optional
+from tortoise import fields, models
+from tortoise.contrib.pydantic.creator import pydantic_model_creator
+from pydantic import BaseModel
+from decimal import Decimal
+from datetime import datetime
 
 
-class Ticker(SQLModel, table=True):
-    id: Optional[int] = Field(primary_key=True, default=None)
-    name: str
-    code: str = Field(sa_column=Column('code', String(32), unique=True))
+class Ticker(models.Model):
+    id = fields.IntField(pk=True)
+    name = fields.CharField(max_length=64)
+    code = fields.CharField(max_length=64, unique=True)
 
+Ticker_Pydantic = pydantic_model_creator(Ticker, name='Ticker')
+TickerIn_Pydantic = pydantic_model_creator(Ticker, name='TickerIn', exclude_readonly=True)
 
-class Transaction(SQLModel, table=True):
-    id: Optional[int] = Field(primary_key=True, default=None)
-    ticker: Ticker = Relationship()
-    ticker_id: int = Field(foreign_key='ticker.id')
-    user: User = Relationship()
-    user_id: int = Field(foreign_key='user.id')
-    count: float
-    cost: Decimal = Field(
-        sa_column=Column(
-            'cost',
-            Float(precision=2, asdecimal=True),
-            nullable=False,
-        )
-    )
-    created_at: datetime = Field(
-        sa_column=Column(
-            'created_at',
-            TIMESTAMP,
-            nullable=False,
-        )
-    )
+class Transaction(models.Model):
+    id = fields.IntField(pk=True)
+    ticker = fields.ForeignKeyField('models.Ticker', on_delete=fields.CASCADE)
+    user = fields.ForeignKeyField('models.User', on_delete=fields.CASCADE)
+    count = fields.DecimalField(16, 4)
+    cost = fields.DecimalField(16, 2)
+    created_at = fields.DatetimeField(auto_now_add=True)
 
-class TransactionCreate(SQLModel):
+Transaction_Pydantic = pydantic_model_creator(Transaction, name='Transaction')
+
+class TransactionCreate(BaseModel):
     symbol: str
     count: float
     cost: Decimal

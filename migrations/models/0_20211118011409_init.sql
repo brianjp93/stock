@@ -1,0 +1,27 @@
+-- upgrade --
+CREATE TABLE IF NOT EXISTS "user" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "display_name" VARCHAR(128) NOT NULL,
+    "email" VARCHAR(128) NOT NULL UNIQUE,
+    "password" VARCHAR(256),
+    "is_active" BOOL NOT NULL  DEFAULT True
+);
+CREATE TABLE IF NOT EXISTS "ticker" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "name" VARCHAR(64) NOT NULL,
+    "code" VARCHAR(64) NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS "transaction" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "count" DECIMAL(16,4) NOT NULL,
+    "cost" DECIMAL(16,2) NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    "ticker_id" INT NOT NULL REFERENCES "ticker" ("id") ON DELETE CASCADE,
+    "user_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS "aerich" (
+    "id" SERIAL NOT NULL PRIMARY KEY,
+    "version" VARCHAR(255) NOT NULL,
+    "app" VARCHAR(20) NOT NULL,
+    "content" JSONB NOT NULL
+);

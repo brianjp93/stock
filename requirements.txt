@@ -4,16 +4,22 @@
 #
 #    pip-compile requirements.in
 #
-aiohttp==3.7.4.post0
+aerich==0.5.8
     # via -r requirements.in
-alembic==1.7.4
+aiohttp==3.8.1
     # via -r requirements.in
+aiosignal==1.2.0
+    # via aiohttp
+aiosqlite==0.17.0
+    # via tortoise-orm
 anyio==3.3.4
     # via starlette
 asgiref==3.4.1
     # via uvicorn
-async-timeout==3.0.1
+async-timeout==4.0.1
     # via aiohttp
+asyncpg==0.25.0
+    # via tortoise-orm
 attrs==21.2.0
     # via aiohttp
 bcrypt==3.2.0
@@ -24,12 +30,18 @@ certifi==2021.10.8
     # via requests
 cffi==1.15.0
     # via bcrypt
-chardet==4.0.0
-    # via aiohttp
 charset-normalizer==2.0.7
-    # via requests
+    # via
+    #   aiohttp
+    #   requests
 click==8.0.3
-    # via uvicorn
+    # via
+    #   aerich
+    #   uvicorn
+ddlparse==1.10.0
+    # via aerich
+dictdiffer==0.9.0
+    # via aerich
 fastapi==0.70.0
     # via
     #   -r requirements.in
@@ -38,8 +50,10 @@ fastapi-jwt-auth==0.5.0
     # via -r requirements.in
 finnhub-python==2.4.5
     # via -r requirements.in
-greenlet==1.1.2
-    # via sqlalchemy
+frozenlist==1.2.0
+    # via
+    #   aiohttp
+    #   aiosignal
 h11==0.12.0
     # via uvicorn
 httptools==0.2.0
@@ -49,28 +63,32 @@ idna==3.3
     #   anyio
     #   requests
     #   yarl
-mako==1.1.5
-    # via alembic
-markupsafe==2.0.1
-    # via mako
+iso8601==0.1.16
+    # via tortoise-orm
 multidict==5.2.0
     # via
     #   aiohttp
     #   yarl
-psycopg2-binary==2.9.1
+psycopg2-binary==2.9.2
     # via -r requirements.in
-pycparser==2.20
+pycparser==2.21
     # via cffi
 pydantic==1.8.2
     # via
+    #   aerich
     #   fastapi
-    #   sqlmodel
 pyjwt==1.7.1
     # via fastapi-jwt-auth
-python-dotenv==0.19.1
+pyparsing==3.0.6
+    # via ddlparse
+pypika-tortoise==0.1.1
+    # via tortoise-orm
+python-dotenv==0.19.2
     # via
     #   -r requirements.in
     #   uvicorn
+pytz==2021.3
+    # via tortoise-orm
 pyyaml==6.0
     # via uvicorn
 requests==2.26.0
@@ -79,23 +97,19 @@ six==1.16.0
     # via bcrypt
 sniffio==1.2.0
     # via anyio
-soupsieve==2.2.1
+soupsieve==2.3.1
     # via beautifulsoup4
-sqlalchemy==1.4.26
-    # via
-    #   alembic
-    #   sqlmodel
-sqlalchemy2-stubs==0.0.2a18
-    # via sqlmodel
-sqlmodel==0.0.4
-    # via -r requirements.in
 starlette==0.16.0
     # via fastapi
-typing-extensions==3.10.0.2
+tortoise-orm[asyncpg]==0.17.8
     # via
-    #   aiohttp
+    #   -r requirements.in
+    #   aerich
+typing-extensions==4.0.0
+    # via
+    #   aiosqlite
+    #   async-timeout
     #   pydantic
-    #   sqlalchemy2-stubs
 urllib3==1.26.7
     # via requests
 uvicorn[standard]==0.15.0
@@ -104,7 +118,7 @@ uvloop==0.16.0
     # via uvicorn
 watchgod==0.7
     # via uvicorn
-websockets==10.0
+websockets==10.1
     # via uvicorn
-yarl==1.7.0
+yarl==1.7.2
     # via aiohttp

@@ -1,6 +1,9 @@
+compile:
+	pip-compile requirements.in > requirements.txt
+	pip-compile dev.in > dev.txt
 run:
 	tmux new-session -d -s stock
-	tmux send-keys "conda deactivate && conda activate stock && uvicorn main:app --reload" C-m
+	tmux send-keys "conda deactivate && conda activate stock && python main.py" C-m
 	tmux split-window -h -c "./frontend" "yarn start"
 	tmux a -t stock
 install:

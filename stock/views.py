@@ -1,16 +1,16 @@
-from datetime import datetime
-import settings
-from typing import Optional, List
+from config.settings import get_settings
+from typing import List
 
-from fastapi import APIRouter, Depends, status, HTTPException
-from sqlmodel import Session, select, func
-from db import get_session
-from account.models import User
+from fastapi import APIRouter, Depends, HTTPException
 from account.utils import get_current_active_user
-from stock.models import Ticker, Transaction, TransactionCreate
+from stock.models import (
+    Ticker, Ticker_Pydantic, Transaction, TransactionCreate,
+    Transaction_Pydantic,
+)
 import finnhub
 
 
+settings = get_settings()
 client = finnhub.Client(api_key=settings.FINNHUB_KEY)
 
 
@@ -27,43 +27,38 @@ async def basic_financials(symbol: str):
 
 
 @router.get("/search/")
-async def search(q: str, session: Session = Depends(get_session)):
+async def search(q: str):
     response = client.symbol_lookup(q)
     for item in response.get("result", []):
-        query = select(Ticker).where(Ticker.code == item["symbol"])
-        if not (ticker := session.exec(query).first()):
+        qs = Ticker.filter(code=item['symbol'])
+        if not (ticker := await qs.first()):
             ticker = Ticker(name=item["description"], code=item["symbol"])
-            session.add(ticker)
-    session.commit()
+            await ticker.save()
     return response
 
 
-@router.get("/tickers/", response_model=List[Ticker])
-async def tickers(
-    page: int = 1, limit: int = 100, session: Session = Depends(get_session)
-):
+@router.get("/tickers/", response_model=List[Ticker_Pydantic])
+async def tickers(page: int = 1, limit: int = 100):
     if 0 > limit > 100:
         raise HTTPException(400, "limit must be between 1 and 100")
     end = page * limit
     start = end - limit
-    query = select(Ticker).order_by(Ticker.code.asc()).limit(limit).offset(start)
-    results = session.exec(query).all()
-    return results
+    qs = Ticker.all().order_by('code').limit(limit).offset(start)
+    return qs
 
 
-@router.post("/transactions/", response_model=Transaction)
+@router.post("/transactions/", response_model=Transaction_Pydantic)
 async def create_transaction(
     *,
-    session: Session = Depends(get_session),
-    user: User = Depends(get_current_active_user),
+    user = Depends(get_current_active_user),
     transaction_create: TransactionCreate,
 ):
-    query = select(Ticker).where(Ticker.code.ilike(transaction_create.symbol))
-    if ticker := session.exec(query).first():
+    user = await user
+    qs = Ticker.filter(code__icontains=transaction_create.symbol)
+    if ticker := await qs.first():
         transaction_create.user_id = user.id
         transaction_create.ticker_id = ticker.id
-        transaction = Transaction.from_orm(transaction_create)
-        session.add(transaction)
-        session.commit()
+        transaction = Transaction(**transaction_create.dict())
+        await transaction.save()
         return transaction
     raise HTTPException(404, 'Symbol could not be found.')
