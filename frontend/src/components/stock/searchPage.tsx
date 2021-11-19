@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from 'react-query';
+import { Link } from 'react-router-dom';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import Form from "react-bootstrap/Form";
 import Row from 'react-bootstrap/Row';
@@ -29,7 +30,11 @@ export function Search() {
     {data.map((item: any) => {
       return (
         <Row>
-          <Col>{item.symbol}</Col>
+          <Col>
+            <Link to={`/ticker/${item.symbol}/`}>
+              {item.symbol}
+            </Link>
+          </Col>
           <Col>{item.description}</Col>
           <Col>{item.displaySymbol}</Col>
           <Col>{item.type}</Col>

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useMutation } from "react-query";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-// import { Skeleton } from "./components/general/skeleton";
 import { Login } from "./components/auth/login";
 import { Home } from './components/home';
+import { TickerDetailPage } from './components/stock/tickerDetail';
 import { useUserQuery } from "./hooks";
 import * as api from "./api/api";
 
@@ -14,6 +14,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/ticker/:code" element={<TickerDetailPage />} />
       </Routes>
     </BrowserRouter>
   );
