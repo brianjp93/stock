@@ -20,7 +20,7 @@ export function Login() {
       <div>
         {loginMut.isError &&
           <Alert>
-            {loginMut.error?.toString()}
+            There was an error while trying to log in.
           </Alert>
         }
         <Form>

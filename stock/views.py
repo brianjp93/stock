@@ -30,12 +30,15 @@ async def basic_financials(symbol: str):
 async def search(q: str):
     response = client.symbol_lookup(q)
     ticker_list = []
+    symbols = {item['symbol'] for item in response.get('result', [])}
+    qs = await Ticker.filter(code__in=symbols).values('code')
+    codes = {x['code'] for x in qs}
     for item in response.get("result", []):
-        qs = Ticker.filter(code=item['symbol'])
-        if not await qs.first():
+        if item['symbol'] not in codes:
             ticker = Ticker(name=item["description"], code=item["symbol"])
             ticker_list.append(ticker)
-    await Ticker.bulk_create(ticker_list)
+    if ticker_list:
+        await Ticker.bulk_create(ticker_list)
     return response
 
 

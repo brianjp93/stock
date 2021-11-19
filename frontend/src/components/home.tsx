@@ -1,6 +1,7 @@
 import { useUserQuery } from '../hooks'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Skeleton } from './general/skeleton';
 
 import { Search } from './stock/searchPage'
 
@@ -24,9 +25,9 @@ export function Home() {
 
 function AuthedUserHome(props: {user: any}) {
   return (
-    <>
+    <Skeleton>
       <h1>Welcome, {props.user.display_name}</h1>
       <Search />
-    </>
+    </Skeleton>
   )
 }
