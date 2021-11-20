@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BasicFinancial } from '../types'
 
 const base = "/api/stock";
 
@@ -8,7 +9,7 @@ export async function search(q: string) {
   return response.data;
 }
 
-export async function basicFinancials(code: string) {
+export async function basicFinancials(code: string):  Promise<BasicFinancial> {
   const url = `${base}/basic/${code}/`
   const response = await axios.get(url)
   return response.data
